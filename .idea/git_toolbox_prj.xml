@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GitToolBoxProjectSettings">
+    <option name="commitMessageValidation" value="true" />
+    <option name="commitMessageValidationRegex" value="(?:fix|chore|docs|feat|refactor|style|test)(?:\(.*\))?: [A-Z].*" />
+    <option name="completionConfigs">
+      <list>
+        <CommitCompletionConfig>
+          <option name="type" value="PATTERN" />
+          <option name="pattern" value="(?:.*)/(#\d+).*" />
+          <option name="testInput" value="fix/#8_test" />
+        </CommitCompletionConfig>
+        <CommitCompletionConfig />
+      </list>
+    </option>
+  </component>
+</project>
