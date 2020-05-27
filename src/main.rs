@@ -7,6 +7,7 @@ use juniper::http::{GraphQLRequest, playground::playground_source};
 use gql::schema::{create_schema, Schema};
 
 mod gql;
+mod config;
 
 async fn playground() -> impl Responder {
     let html = playground_source("/graphql");
@@ -43,6 +44,8 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
 
+    let config = config::Config::load().expect("Config Error");
+
     // Create Juniper schema
     let schema = std::sync::Arc::new(create_schema());
 
@@ -57,5 +60,5 @@ async fn main() -> std::io::Result<()> {
         .service(web::resource("/").route(web::get().to(playground)))
     }).keep_alive(75);
 
-    server.bind("127.0.0.1:8080")?.run().await
+    server.bind(&config.bind_address)?.run().await
 }
