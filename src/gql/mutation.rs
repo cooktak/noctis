@@ -1,8 +1,13 @@
 use juniper::FieldResult;
+use log::error;
 
-use crate::gql::context::Context;
-use crate::gql::input::NewHuman;
-use crate::gql::object::Human;
+use crate::database::model::NewUser as DatabaseNewUser;
+use crate::gql::object::User;
+use crate::user::local;
+
+use super::context::Context;
+use super::input::{NewHuman, NewUser};
+use super::object::Human;
 
 pub struct MutationRoot;
 
@@ -17,5 +22,14 @@ impl MutationRoot {
             appears_in: new_human.appears_in,
             home_planet: new_human.home_planet,
         })
+    }
+
+    fn create_user(context: &Context, new_user: NewUser) -> Option<User> {
+        let conn = context.database_pool
+        .get()
+        .map_err(|e| error!("Database Failed"))
+        .ok()?;
+        let result = local::create(&conn, DatabaseNewUser::from_graphql(new_user))?;
+        Some(User::from_database(result))
     }
 }

@@ -99,13 +99,13 @@ table! {
 }
 
 table! {
-    use crate::database::model::UserGender;
+    use crate::database::enums::Gender;
     use diesel::sql_types::*;
     user (id) {
         id -> Integer,
         birthday -> Datetime,
         create_time -> Datetime,
-        gender -> UserGender,
+        gender -> Gender,
         nickname -> Varchar,
         password -> Varchar,
         username -> Varchar,

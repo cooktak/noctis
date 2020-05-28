@@ -1,5 +1,9 @@
 use chrono::NaiveDateTime;
-use diesel_derive_enum::*;
+
+use crate::gql::input::NewUser as GraphQLNewUser;
+
+use super::enums::Gender;
+use super::schema::user;
 
 #[derive(Queryable)]
 pub struct Cookery {
@@ -89,23 +93,38 @@ pub struct Token {
     pub user_id: i32,
 }
 
-#[derive(Debug, DbEnum)]
-pub enum UserGender {
-    Private,
-    Male,
-    Female,
-    Etc,
-}
-
 #[derive(Queryable)]
 pub struct User {
-    id: i32,
-    birthday: NaiveDateTime,
-    create_time: NaiveDateTime,
-    gender: UserGender,
-    nickname: String,
-    password: String,
-    username: String,
-    user_tag: i32,
-    photo_link: Option<String>,
+    pub id: i32,
+    pub birthday: NaiveDateTime,
+    pub create_time: NaiveDateTime,
+    pub gender: Gender,
+    pub nickname: String,
+    pub password: String,
+    pub username: String,
+    pub user_tag: i32,
+    pub photo_link: Option<String>,
+}
+
+#[derive(Insertable)]
+#[table_name = "user"]
+pub struct NewUser<'a> {
+    pub birthday: NaiveDateTime,
+    pub gender: Gender,
+    pub nickname: &'a str,
+    pub password: &'a str,
+    pub username: &'a str,
+}
+
+
+impl NewUser<'_> {
+    pub fn from_graphql(user: GraphQLNewUser) -> Self {
+        Self {
+            birthday: user.birthday,
+            gender: user.gender,
+            nickname: user.nickname.as_ref(),
+            password: user.password.as_ref(),
+            username: user.username.as_ref(),
+        }
+    }
 }
