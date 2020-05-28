@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate diesel;
+
 use std::sync::Arc;
 
 use actix_web::{App, dev, Error, http, HttpResponse, HttpServer, middleware, Responder, web};

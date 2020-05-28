@@ -4,50 +4,44 @@ SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE =
         'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema cooktak
+-- Table cookery
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `cooktak` DEFAULT CHARACTER SET utf8mb4;
-USE `cooktak`;
-
--- -----------------------------------------------------
--- Table `cooktak`.`cookery`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`cookery`
+CREATE TABLE IF NOT EXISTS cookery
 (
-    `id`   INT(11)      NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`)
+    id   INT(11)      NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 )
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`food_type`
+-- Table food_type
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`food_type`
+CREATE TABLE IF NOT EXISTS food_type
 (
-    `id`   INT(11)      NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`)
+    id   INT(11)      NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 )
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`ingredient`
+-- Table ingredient
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`ingredient`
+CREATE TABLE IF NOT EXISTS ingredient
 (
-    `id`       INT(11)      NOT NULL AUTO_INCREMENT,
-    `name`     VARCHAR(255) NOT NULL,
-    `parentId` INT(11)      NULL DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `FK_9c1af359bf6af1aebeea653b0ed` (`parentId` ASC),
+    id        INT(11)      NOT NULL AUTO_INCREMENT,
+    name      VARCHAR(255) NOT NULL,
+    parent_id INT(11)      NULL DEFAULT NULL,
+    PRIMARY KEY (id),
+    INDEX `FK_9c1af359bf6af1aebeea653b0ed` (parent_id ASC),
     CONSTRAINT `FK_9c1af359bf6af1aebeea653b0ed`
-        FOREIGN KEY (`parentId`)
-            REFERENCES `cooktak`.`ingredient` (`id`)
+        FOREIGN KEY (parent_id)
+            REFERENCES ingredient (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -57,20 +51,20 @@ CREATE TABLE IF NOT EXISTS `cooktak`.`ingredient`
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`user`
+-- Table user
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`user`
+CREATE TABLE IF NOT EXISTS user
 (
-    `id`         INT(11)                                   NOT NULL AUTO_INCREMENT,
-    `birthday`   DATETIME                                  NOT NULL,
-    `createTime` DATETIME(6)                               NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    `gender`     ENUM ('etc', 'female', 'male', 'private') NOT NULL,
-    `nickname`   VARCHAR(16)                               NOT NULL,
-    `password`   VARCHAR(255)                              NOT NULL,
-    `username`   VARCHAR(255)                              NOT NULL,
-    `userTag`    INT(11)                                   NOT NULL,
-    `photoLink`  VARCHAR(255)                              NULL     DEFAULT NULL,
-    PRIMARY KEY (`id`)
+    id          INT(11)                                   NOT NULL AUTO_INCREMENT,
+    birthday    DATETIME                                  NOT NULL,
+    create_time DATETIME(6)                               NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    gender      ENUM ('etc', 'female', 'male', 'private') NOT NULL,
+    nickname    VARCHAR(16)                               NOT NULL,
+    password    VARCHAR(255)                              NOT NULL,
+    username    VARCHAR(255)                              NOT NULL,
+    user_tag    INT(11)                                   NOT NULL,
+    photo_link  VARCHAR(255)                              NULL     DEFAULT NULL,
+    PRIMARY KEY (id)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 30
@@ -78,19 +72,19 @@ CREATE TABLE IF NOT EXISTS `cooktak`.`user`
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`post`
+-- Table post
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`post`
+CREATE TABLE IF NOT EXISTS post
 (
-    `id`         INT(11)      NOT NULL AUTO_INCREMENT,
-    `createTime` DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    `title`      VARCHAR(255) NOT NULL,
-    `userId`     INT(11)      NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `FK_5c1cf55c308037b5aca1038a131` (`userId` ASC),
+    id          INT(11)      NOT NULL AUTO_INCREMENT,
+    create_time DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    title       VARCHAR(255) NOT NULL,
+    user_id     INT(11)      NOT NULL,
+    PRIMARY KEY (id),
+    INDEX `FK_5c1cf55c308037b5aca1038a131` (user_id ASC),
     CONSTRAINT `FK_5c1cf55c308037b5aca1038a131`
-        FOREIGN KEY (`userId`)
-            REFERENCES `cooktak`.`user` (`id`)
+        FOREIGN KEY (user_id)
+            REFERENCES user (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -99,19 +93,19 @@ CREATE TABLE IF NOT EXISTS `cooktak`.`post`
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`post_content`
+-- Table post_content
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`post_content`
+CREATE TABLE IF NOT EXISTS post_content
 (
-    `id`        INT(11)      NOT NULL AUTO_INCREMENT,
-    `content`   VARCHAR(255) NOT NULL,
-    `photoLink` VARCHAR(255) NOT NULL,
-    `postId`    INT(11)      NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `FK_d5e71a3e4c6277474e6af05b8b2` (`postId` ASC),
+    id         INT(11)      NOT NULL AUTO_INCREMENT,
+    content    VARCHAR(255) NOT NULL,
+    photo_link VARCHAR(255) NOT NULL,
+    post_id    INT(11)      NOT NULL,
+    PRIMARY KEY (id),
+    INDEX `FK_d5e71a3e4c6277474e6af05b8b2` (post_id ASC),
     CONSTRAINT `FK_d5e71a3e4c6277474e6af05b8b2`
-        FOREIGN KEY (`postId`)
-            REFERENCES `cooktak`.`post` (`id`)
+        FOREIGN KEY (post_id)
+            REFERENCES post (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -120,23 +114,23 @@ CREATE TABLE IF NOT EXISTS `cooktak`.`post_content`
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`post_cookery`
+-- Table post_cookery
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`post_cookery`
+CREATE TABLE IF NOT EXISTS post_cookery
 (
-    `postId`    INT(11) NOT NULL,
-    `cookeryId` INT(11) NOT NULL,
-    PRIMARY KEY (`postId`, `cookeryId`),
-    INDEX `IDX_b5109155d262c0accee8a0a5da` (`postId` ASC),
-    INDEX `IDX_9e089190f0c7f9e7ee586d1c07` (`cookeryId` ASC),
+    post_id    INT(11) NOT NULL,
+    cookery_id INT(11) NOT NULL,
+    PRIMARY KEY (post_id, cookery_id),
+    INDEX `IDX_b5109155d262c0accee8a0a5da` (post_id ASC),
+    INDEX `IDX_9e089190f0c7f9e7ee586d1c07` (cookery_id ASC),
     CONSTRAINT `FK_9e089190f0c7f9e7ee586d1c076`
-        FOREIGN KEY (`cookeryId`)
-            REFERENCES `cooktak`.`cookery` (`id`)
+        FOREIGN KEY (cookery_id)
+            REFERENCES cookery (id)
             ON DELETE CASCADE
             ON UPDATE NO ACTION,
     CONSTRAINT `FK_b5109155d262c0accee8a0a5da1`
-        FOREIGN KEY (`postId`)
-            REFERENCES `cooktak`.`post` (`id`)
+        FOREIGN KEY (post_id)
+            REFERENCES post (id)
             ON DELETE CASCADE
             ON UPDATE NO ACTION
 )
@@ -145,23 +139,23 @@ CREATE TABLE IF NOT EXISTS `cooktak`.`post_cookery`
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`post_food_type`
+-- Table post_food_type
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`post_food_type`
+CREATE TABLE IF NOT EXISTS post_food_type
 (
-    `postId`     INT(11) NOT NULL,
-    `foodTypeId` INT(11) NOT NULL,
-    PRIMARY KEY (`postId`, `foodTypeId`),
-    INDEX `IDX_32954178aad2d257898d82e598` (`postId` ASC),
-    INDEX `IDX_74da3c6ddf988eba0db8ae2ca2` (`foodTypeId` ASC),
+    post_id      INT(11) NOT NULL,
+    food_type_id INT(11) NOT NULL,
+    PRIMARY KEY (post_id, food_type_id),
+    INDEX `IDX_32954178aad2d257898d82e598` (post_id ASC),
+    INDEX `IDX_74da3c6ddf988eba0db8ae2ca2` (food_type_id ASC),
     CONSTRAINT `FK_32954178aad2d257898d82e598d`
-        FOREIGN KEY (`postId`)
-            REFERENCES `cooktak`.`post` (`id`)
+        FOREIGN KEY (post_id)
+            REFERENCES post (id)
             ON DELETE CASCADE
             ON UPDATE NO ACTION,
     CONSTRAINT `FK_74da3c6ddf988eba0db8ae2ca2b`
-        FOREIGN KEY (`foodTypeId`)
-            REFERENCES `cooktak`.`food_type` (`id`)
+        FOREIGN KEY (food_type_id)
+            REFERENCES food_type (id)
             ON DELETE CASCADE
             ON UPDATE NO ACTION
 )
@@ -170,24 +164,24 @@ CREATE TABLE IF NOT EXISTS `cooktak`.`post_food_type`
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`post_ingredient`
+-- Table post_ingredient
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`post_ingredient`
+CREATE TABLE IF NOT EXISTS post_ingredient
 (
-    `postId`       INT(11)      NOT NULL,
-    `ingredientId` INT(11)      NOT NULL,
-    `amount`       INT(11)      NOT NULL,
-    `unit`         VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`postId`, `ingredientId`),
-    INDEX `FK_70e062685b27fccd2dac931581a` (`ingredientId` ASC),
+    post_id       INT(11)      NOT NULL,
+    ingredient_id INT(11)      NOT NULL,
+    amount        INT(11)      NOT NULL,
+    unit          VARCHAR(255) NOT NULL,
+    PRIMARY KEY (post_id, ingredient_id),
+    INDEX `FK_70e062685b27fccd2dac931581a` (ingredient_id ASC),
     CONSTRAINT `FK_70e062685b27fccd2dac931581a`
-        FOREIGN KEY (`ingredientId`)
-            REFERENCES `cooktak`.`ingredient` (`id`)
+        FOREIGN KEY (ingredient_id)
+            REFERENCES ingredient (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `FK_b9f502208ebb1947c1da2c4975e`
-        FOREIGN KEY (`postId`)
-            REFERENCES `cooktak`.`post` (`id`)
+        FOREIGN KEY (post_id)
+            REFERENCES post (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -196,56 +190,56 @@ CREATE TABLE IF NOT EXISTS `cooktak`.`post_ingredient`
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`vendor`
+-- Table vendor
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`vendor`
+CREATE TABLE IF NOT EXISTS vendor
 (
-    `id`   INT(11)      NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`)
+    id   INT(11)      NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 )
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`seller`
+-- Table seller
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`seller`
+CREATE TABLE IF NOT EXISTS seller
 (
-    `id`   INT(11)      NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`)
+    id   INT(11)      NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 )
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`product`
+-- Table product
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`product`
+CREATE TABLE IF NOT EXISTS product
 (
-    `id`                     VARCHAR(255) NOT NULL,
-    `info`                   VARCHAR(255) NOT NULL,
-    `KANProductCategoryCode` VARCHAR(255) NOT NULL,
-    `name`                   VARCHAR(255) NOT NULL,
-    `photoLink`              VARCHAR(255) NULL DEFAULT NULL,
-    `unit`                   VARCHAR(255) NOT NULL,
-    `wight`                  VARCHAR(255) NOT NULL,
-    `sellerId`               INT(11)      NOT NULL,
-    `vendorId`               INT(11)      NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `FK_d5cac481d22dacaf4d53f900a3f` (`sellerId` ASC),
-    INDEX `FK_921582066aa70b502e78ea92012` (`vendorId` ASC),
+    id                        VARCHAR(255) NOT NULL,
+    info                      VARCHAR(255) NOT NULL,
+    kan_product_category_code VARCHAR(255) NOT NULL,
+    name                      VARCHAR(255) NOT NULL,
+    photo_link                VARCHAR(255) NULL DEFAULT NULL,
+    unit                      VARCHAR(255) NOT NULL,
+    wight                     VARCHAR(255) NOT NULL,
+    seller_id                 INT(11)      NOT NULL,
+    vendor_id                 INT(11)      NOT NULL,
+    PRIMARY KEY (id),
+    INDEX `FK_d5cac481d22dacaf4d53f900a3f` (seller_id ASC),
+    INDEX `FK_921582066aa70b502e78ea92012` (vendor_id ASC),
     CONSTRAINT `FK_921582066aa70b502e78ea92012`
-        FOREIGN KEY (`vendorId`)
-            REFERENCES `cooktak`.`vendor` (`id`)
+        FOREIGN KEY (vendor_id)
+            REFERENCES vendor (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `FK_d5cac481d22dacaf4d53f900a3f`
-        FOREIGN KEY (`sellerId`)
-            REFERENCES `cooktak`.`seller` (`id`)
+        FOREIGN KEY (seller_id)
+            REFERENCES seller (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -254,23 +248,23 @@ CREATE TABLE IF NOT EXISTS `cooktak`.`product`
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`post_product`
+-- Table post_product
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`post_product`
+CREATE TABLE IF NOT EXISTS post_product
 (
-    `postId`    INT(11)      NOT NULL,
-    `productId` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`postId`, `productId`),
-    INDEX `IDX_72e185a9d26cfa23c3648ba854` (`postId` ASC),
-    INDEX `IDX_1faaa6e24261b54d14e1067844` (`productId` ASC),
+    post_id    INT(11)      NOT NULL,
+    product_id VARCHAR(255) NOT NULL,
+    PRIMARY KEY (post_id, product_id),
+    INDEX `IDX_72e185a9d26cfa23c3648ba854` (post_id ASC),
+    INDEX `IDX_1faaa6e24261b54d14e1067844` (product_id ASC),
     CONSTRAINT `FK_1faaa6e24261b54d14e10678449`
-        FOREIGN KEY (`productId`)
-            REFERENCES `cooktak`.`product` (`id`)
+        FOREIGN KEY (product_id)
+            REFERENCES product (id)
             ON DELETE CASCADE
             ON UPDATE NO ACTION,
     CONSTRAINT `FK_72e185a9d26cfa23c3648ba8545`
-        FOREIGN KEY (`postId`)
-            REFERENCES `cooktak`.`post` (`id`)
+        FOREIGN KEY (post_id)
+            REFERENCES post (id)
             ON DELETE CASCADE
             ON UPDATE NO ACTION
 )
@@ -279,19 +273,19 @@ CREATE TABLE IF NOT EXISTS `cooktak`.`post_product`
 
 
 -- -----------------------------------------------------
--- Table `cooktak`.`token`
+-- Table token
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cooktak`.`token`
+CREATE TABLE IF NOT EXISTS token
 (
-    `id`           INT(11)      NOT NULL AUTO_INCREMENT,
-    `accessToken`  VARCHAR(255) NOT NULL,
-    `refreshToken` VARCHAR(255) NOT NULL,
-    `userId`       INT(11)      NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE INDEX `REL_94f168faad896c0786646fa3d4` (`userId` ASC),
+    id            INT(11)      NOT NULL AUTO_INCREMENT,
+    access_token  VARCHAR(255) NOT NULL,
+    refresh_token VARCHAR(255) NOT NULL,
+    user_id       INT(11)      NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE INDEX `REL_94f168faad896c0786646fa3d4` (user_id ASC),
     CONSTRAINT `FK_94f168faad896c0786646fa3d4a`
-        FOREIGN KEY (`userId`)
-            REFERENCES `cooktak`.`user` (`id`)
+        FOREIGN KEY (user_id)
+            REFERENCES user (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

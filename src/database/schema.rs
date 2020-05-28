@@ -16,16 +16,16 @@ table! {
     ingredient (id) {
         id -> Integer,
         name -> Varchar,
-        parentId -> Nullable<Integer>,
+        parent_id -> Nullable<Integer>,
     }
 }
 
 table! {
     post (id) {
         id -> Integer,
-        createTime -> Datetime,
+        create_time -> Datetime,
         title -> Varchar,
-        userId -> Integer,
+        user_id -> Integer,
     }
 }
 
@@ -33,38 +33,38 @@ table! {
     post_content (id) {
         id -> Integer,
         content -> Varchar,
-        photoLink -> Varchar,
-        postId -> Integer,
+        photo_link -> Varchar,
+        post_id -> Integer,
     }
 }
 
 table! {
-    post_cookery (postId, cookeryId) {
-        postId -> Integer,
-        cookeryId -> Integer,
+    post_cookery (post_id, cookery_id) {
+        post_id -> Integer,
+        cookery_id -> Integer,
     }
 }
 
 table! {
-    post_food_type (postId, foodTypeId) {
-        postId -> Integer,
-        foodTypeId -> Integer,
+    post_food_type (post_id, food_type_id) {
+        post_id -> Integer,
+        food_type_id -> Integer,
     }
 }
 
 table! {
-    post_ingredient (postId, ingredientId) {
-        postId -> Integer,
-        ingredientId -> Integer,
+    post_ingredient (post_id, ingredient_id) {
+        post_id -> Integer,
+        ingredient_id -> Integer,
         amount -> Integer,
         unit -> Varchar,
     }
 }
 
 table! {
-    post_product (postId, productId) {
-        postId -> Integer,
-        productId -> Varchar,
+    post_product (post_id, product_id) {
+        post_id -> Integer,
+        product_id -> Varchar,
     }
 }
 
@@ -72,13 +72,13 @@ table! {
     product (id) {
         id -> Varchar,
         info -> Varchar,
-        KANProductCategoryCode -> Varchar,
+        kan_product_category_code -> Varchar,
         name -> Varchar,
-        photoLink -> Nullable<Varchar>,
+        photo_link -> Nullable<Varchar>,
         unit -> Varchar,
         wight -> Varchar,
-        sellerId -> Integer,
-        vendorId -> Integer,
+        seller_id -> Integer,
+        vendor_id -> Integer,
     }
 }
 
@@ -92,23 +92,25 @@ table! {
 table! {
     token (id) {
         id -> Integer,
-        accessToken -> Varchar,
-        refreshToken -> Varchar,
-        userId -> Integer,
+        access_token -> Varchar,
+        refresh_token -> Varchar,
+        user_id -> Integer,
     }
 }
 
 table! {
+    use crate::database::model::UserGender;
+    use diesel::sql_types::*;
     user (id) {
         id -> Integer,
         birthday -> Datetime,
-        createTime -> Datetime,
-        gender -> Enum,
+        create_time -> Datetime,
+        gender -> UserGender,
         nickname -> Varchar,
         password -> Varchar,
         username -> Varchar,
-        userTag -> Integer,
-        photoLink -> Nullable<Varchar>,
+        user_tag -> Integer,
+        photo_link -> Nullable<Varchar>,
     }
 }
 
@@ -119,19 +121,19 @@ table! {
     }
 }
 
-joinable!(post -> user (userId));
-joinable!(post_content -> post (postId));
-joinable!(post_cookery -> cookery (cookeryId));
-joinable!(post_cookery -> post (postId));
-joinable!(post_food_type -> food_type (foodTypeId));
-joinable!(post_food_type -> post (postId));
-joinable!(post_ingredient -> ingredient (ingredientId));
-joinable!(post_ingredient -> post (postId));
-joinable!(post_product -> post (postId));
-joinable!(post_product -> product (productId));
-joinable!(product -> seller (sellerId));
-joinable!(product -> vendor (vendorId));
-joinable!(token -> user (userId));
+joinable!(post -> user (user_id));
+joinable!(post_content -> post (post_id));
+joinable!(post_cookery -> cookery (cookery_id));
+joinable!(post_cookery -> post (post_id));
+joinable!(post_food_type -> food_type (food_type_id));
+joinable!(post_food_type -> post (post_id));
+joinable!(post_ingredient -> ingredient (ingredient_id));
+joinable!(post_ingredient -> post (post_id));
+joinable!(post_product -> post (post_id));
+joinable!(post_product -> product (product_id));
+joinable!(product -> seller (seller_id));
+joinable!(product -> vendor (vendor_id));
+joinable!(token -> user (user_id));
 
 allow_tables_to_appear_in_same_query!(
     cookery,
