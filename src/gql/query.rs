@@ -1,11 +1,14 @@
 use juniper::FieldResult;
 
-use crate::gql::schema::enums::Episode;
-use crate::gql::schema::object::Human;
+use crate::gql::context::Context;
+use crate::gql::enums::Episode;
+use crate::gql::object::Human;
 
 pub struct QueryRoot;
 
-#[juniper::object]
+#[juniper::object(
+Context = Context,
+)]
 impl QueryRoot {
     fn human(id: String) -> FieldResult<Human> {
         Ok(Human {

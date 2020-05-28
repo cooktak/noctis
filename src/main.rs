@@ -1,13 +1,20 @@
+#[macro_use]
+extern crate diesel;
+
 use std::sync::Arc;
 
 use actix_web::{App, dev, Error, http, HttpResponse, HttpServer, middleware, Responder, web};
 use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 use juniper::http::{GraphQLRequest, playground::playground_source};
 
-use gql::schema::{create_schema, Schema};
+use database::connection::establish_connection;
+use gql::{create_schema, Schema};
+
+use crate::gql::context::Context;
 
 mod gql;
 mod config;
+mod database;
 
 async fn playground() -> impl Responder {
     let html = playground_source("/graphql");
@@ -17,11 +24,12 @@ async fn playground() -> impl Responder {
 }
 
 async fn graphql(
-    st: web::Data<Arc<Schema>>,
+    schema: web::Data<Arc<Schema>>,
+    context: web::Data<Arc<Context>>,
     data: web::Json<GraphQLRequest>,
 ) -> Result<HttpResponse, Error> {
     let user = web::block(move || {
-        let res = data.execute(&st, &());
+        let res = data.execute(&schema, &context);
         Ok::<_, serde_json::error::Error>(serde_json::to_string(&res)?)
     })
     .await?;
@@ -46,6 +54,11 @@ async fn main() -> std::io::Result<()> {
 
     let config = config::Config::load().expect("Config Error");
 
+    let pool = establish_connection(&config.database).expect("Invalid database config");
+
+    // Create Context
+    let context = Arc::new(Context::new(pool));
+
     // Create Juniper schema
     let schema = std::sync::Arc::new(create_schema());
 
@@ -53,6 +66,7 @@ async fn main() -> std::io::Result<()> {
     let server = HttpServer::new(move || {
         App::new()
         .data(schema.clone())
+        .data(context.clone())
         .wrap(middleware::Logger::default())
         .wrap(ErrorHandlers::new().handler(http::StatusCode::NOT_FOUND, render_404))
         .service(web::resource("/graphql").route(web::post().to(graphql)))

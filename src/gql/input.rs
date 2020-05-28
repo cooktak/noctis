@@ -1,11 +1,10 @@
-use juniper::GraphQLObject;
+use juniper::GraphQLInputObject;
 
-use crate::gql::schema::enums::Episode;
+use crate::gql::enums::Episode;
 
-#[derive(GraphQLObject)]
+#[derive(GraphQLInputObject)]
 #[graphql(description = "A humanoid creature in the Star Wars universe")]
-pub struct Human {
-    pub id: String,
+pub struct NewHuman {
     pub name: String,
     pub appears_in: Vec<Episode>,
     pub home_planet: String,

@@ -1,11 +1,14 @@
 use juniper::FieldResult;
 
-use crate::gql::schema::input::NewHuman;
-use crate::gql::schema::object::Human;
+use crate::gql::context::Context;
+use crate::gql::input::NewHuman;
+use crate::gql::object::Human;
 
 pub struct MutationRoot;
 
-#[juniper::object]
+#[juniper::object(
+Context = Context,
+)]
 impl MutationRoot {
     fn create_human(new_human: NewHuman) -> FieldResult<Human> {
         Ok(Human {
