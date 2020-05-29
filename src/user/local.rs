@@ -17,9 +17,8 @@ pub fn create(
     use crate::database::schema::user::dsl::*;
     use diesel::prelude::*;
     diesel::insert_into(user)
-    .values(&new_user)
+    .values(&new_user.to_hashed())
     .execute(conn)
-    /*.map_err(|e| DatabaseError::Unknown)*/
     .expect("Creation Error");
     user
     .filter(username.eq(new_user.username.to_owned()))
