@@ -107,6 +107,19 @@ pub struct User {
     pub photo_link: Option<String>,
 }
 
+impl User {
+    pub fn hashed_password(password: &str, username: &str, user_tag: &i32) -> String {
+        argon2rs::argon2i_simple(
+            password,
+            format!("{}#{}", username, user_tag).as_str(),
+        )
+        .to_vec()
+        .into_iter()
+        .map(|v| v as char)
+        .collect()
+    }
+}
+
 #[derive(Insertable)]
 #[table_name = "user"]
 pub struct NewUser {
@@ -136,6 +149,21 @@ impl NewUser {
             password: user.password,
             username: user.username,
             user_tag: rng.gen_range(1, 9999),
+        }
+    }
+
+    pub fn to_hashed(&self) -> Self {
+        NewUser {
+            birthday: self.birthday.clone(),
+            gender: self.gender.clone(),
+            nickname: self.nickname.clone(),
+            password: User::hashed_password(
+                &self.password,
+                &self.username,
+                &self.user_tag,
+            ),
+            username: self.username.clone(),
+            user_tag: self.user_tag.clone(),
         }
     }
 }
