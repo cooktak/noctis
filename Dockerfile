@@ -4,6 +4,6 @@ COPY . .
 RUN cargo install --path .
 
 FROM debian:buster-slim
-RUN apt-get update && apt-get install -y extra-runtime-dependencies mariadb-dev
+RUN apt-get update && apt-get install -y mariadb-dev
 COPY --from=builder /usr/local/cargo/bin/noctis /usr/local/bin/cooktak
 CMD ["cooktak"]
