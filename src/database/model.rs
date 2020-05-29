@@ -1,4 +1,5 @@
 use chrono::NaiveDateTime;
+use rand::Rng;
 
 use crate::gql::input::NewUser as GraphQLNewUser;
 
@@ -98,7 +99,7 @@ pub struct User {
     pub id: i32,
     pub birthday: NaiveDateTime,
     pub create_time: NaiveDateTime,
-    pub gender: Gender,
+    pub gender: String,
     pub nickname: String,
     pub password: String,
     pub username: String,
@@ -108,23 +109,33 @@ pub struct User {
 
 #[derive(Insertable)]
 #[table_name = "user"]
-pub struct NewUser<'a> {
+pub struct NewUser {
     pub birthday: NaiveDateTime,
-    pub gender: Gender,
-    pub nickname: &'a str,
-    pub password: &'a str,
-    pub username: &'a str,
+    pub gender: String,
+    pub nickname: String,
+    pub password: String,
+    pub username: String,
+    pub user_tag: i32,
 }
 
 
-impl NewUser<'_> {
+impl NewUser {
     pub fn from_graphql(user: GraphQLNewUser) -> Self {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+
         Self {
             birthday: user.birthday,
-            gender: user.gender,
-            nickname: user.nickname.as_ref(),
-            password: user.password.as_ref(),
-            username: user.username.as_ref(),
+            gender: match user.gender {
+                Gender::Private => String::from("private"),
+                Gender::Male => String::from("male"),
+                Gender::Female => String::from("female"),
+                _ => String::from("etc"),
+            },
+            nickname: user.nickname,
+            password: user.password,
+            username: user.username,
+            user_tag: rng.gen_range(1, 9999),
         }
     }
 }

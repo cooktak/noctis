@@ -1,7 +1,9 @@
 use juniper::FieldResult;
 use log::error;
+use thiserror::Error;
 
-use crate::database::model::NewUser as DatabaseNewUser;
+use crate::config::Database;
+use crate::database::model::{NewUser as DatabaseNewUser, User as DatabaseUser};
 use crate::gql::object::User;
 use crate::user::local;
 
@@ -10,6 +12,14 @@ use super::input::{NewHuman, NewUser};
 use super::object::Human;
 
 pub struct MutationRoot;
+
+#[derive(Error, Debug)]
+pub enum UserError {
+    #[error("User not found")]
+    NotFound,
+    #[error("Authentication error")]
+    Authentication,
+}
 
 #[juniper::object(
 Context = Context,
@@ -29,7 +39,8 @@ impl MutationRoot {
         .get()
         .map_err(|e| error!("Database Failed"))
         .ok()?;
-        let result = local::create(&conn, DatabaseNewUser::from_graphql(new_user))?;
-        Some(User::from_database(result))
+        let result: DatabaseUser = local::create(&conn, DatabaseNewUser::from_graphql(new_user))
+        .map_err(|e| UserError::NotFound).expect("Creation Error");
+        Some(User::from_database(&result))
     }
 }

@@ -1,4 +1,4 @@
-#[derive(Debug, diesel_derive_enum::DbEnum, juniper::GraphQLEnum)]
+#[derive(Debug, juniper::GraphQLEnum)]
 pub enum Gender {
     Private,
     Male,
