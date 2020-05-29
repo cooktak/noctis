@@ -120,7 +120,7 @@ impl User {
     }
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Debug)]
 #[table_name = "user"]
 pub struct NewUser {
     pub birthday: NaiveDateTime,
@@ -165,5 +165,28 @@ impl NewUser {
             username: self.username.clone(),
             user_tag: self.user_tag.clone(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::NaiveDate;
+
+    use super::*;
+
+    #[test]
+    fn password_hashing() {
+        let user: NewUser = NewUser {
+            birthday: NaiveDate::from_ymd(2002, 1, 22).and_hms(0, 0, 0),
+            gender: "etc".to_string(),
+            nickname: "SLoWMoTIoN".to_string(),
+            password: "P@ssw0rd".to_string(),
+            username: "username".to_string(),
+            user_tag: 122,
+        };
+        assert_eq!(
+            user.to_hashed().password,
+            User::hashed_password(&user.password, &user.username, &user.user_tag)
+        );
     }
 }
