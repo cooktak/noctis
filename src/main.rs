@@ -15,6 +15,7 @@ use crate::gql::context::Context;
 mod gql;
 mod config;
 mod database;
+mod user;
 
 async fn playground() -> impl Responder {
     let html = playground_source("/graphql");
