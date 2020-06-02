@@ -2,8 +2,8 @@ use chrono::{DateTime, Utc};
 use juniper::GraphQLObject;
 use juniper::integrations::chrono::*;
 
-use crate::database::{enums::Gender, model::User as DatabaseUser};
-use crate::gql::enums::Episode;
+use crate::database::model::User as DatabaseUser;
+use super::enums::{Episode, Gender};
 
 #[derive(GraphQLObject)]
 #[graphql(description = "A humanoid creature in the Star Wars universe")]

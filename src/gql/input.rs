@@ -1,8 +1,7 @@
 use juniper::GraphQLInputObject;
 
-use crate::gql::enums::Episode;
 use chrono::NaiveDateTime;
-use crate::database::enums::Gender;
+use super::enums::{Episode, Gender};
 
 #[derive(GraphQLInputObject)]
 #[graphql(description = "A humanoid creature in the Star Wars universe")]
