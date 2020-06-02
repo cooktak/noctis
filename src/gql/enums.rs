@@ -6,3 +6,11 @@ pub enum Episode {
     Empire,
     Jedi,
 }
+
+#[derive(juniper::GraphQLEnum)]
+pub enum Gender {
+    Private,
+    Male,
+    Female,
+    Etc,
+}
