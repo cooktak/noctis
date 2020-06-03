@@ -1,15 +1,19 @@
 #[macro_use]
 extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
 
 use std::sync::Arc;
 
 use actix_web::{App, dev, Error, http, HttpResponse, HttpServer, middleware, Responder, web};
 use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 use juniper::http::{GraphQLRequest, playground::playground_source};
+use log::error;
 
-use database::connection::establish_connection;
+use database::connection::establish_r2d2_connection;
 use gql::{create_schema, Schema};
 
+use crate::database::connection::{build_pool, establish_diesel_connection};
 use crate::gql::context::Context;
 
 mod gql;
@@ -48,6 +52,8 @@ fn render_404<B>(mut res: dev::ServiceResponse<B>) -> Result<ErrorHandlerRespons
     Ok(ErrorHandlerResponse::Response(res))
 }
 
+embed_migrations!();
+
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
@@ -55,10 +61,22 @@ async fn main() -> std::io::Result<()> {
 
     let config = config::Config::load().expect("Config Error");
 
-    let pool = establish_connection(&config.database).expect("Invalid database config");
+    // Establish connection for diesel
+    let connection = establish_diesel_connection(&config.database)
+    .ok().expect("Database Connection Failed");
+
+    // Migrate
+    embedded_migrations::run(&connection).map_err(|e| error!("Migration failed")).unwrap();
+
+    // Establish connection for R2D2
+    let manager = establish_r2d2_connection(&config.database);
 
     // Create Context
-    let context = Arc::new(Context::new(pool));
+    let context = Arc::new(
+        Context::new(
+            build_pool(manager).expect("Database Pool Error")
+        )
+    );
 
     // Create Juniper schema
     let schema = std::sync::Arc::new(create_schema());
