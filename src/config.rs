@@ -1,19 +1,14 @@
 use std::env::{var, VarError};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug)]
-pub enum ConfigError {
-    MissingKey(String),
-    InvalidFormat(String),
-}
+use thiserror::Error;
 
-impl Display for ConfigError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::MissingKey(key) => write!(f, "{} does not exist", key),
-            Self::InvalidFormat(key) => write!(f, "{} is in invalid format", key),
-        }
-    }
+#[derive(Error, Debug)]
+pub enum ConfigError {
+    #[error("{0} does not exist")]
+    MissingKey(String),
+    #[error("{0} is in invalid format")]
+    InvalidFormat(String),
 }
 
 impl ConfigError {
