@@ -1,9 +1,8 @@
 use chrono::NaiveDateTime;
 use rand::Rng;
 
-use crate::gql::input::NewUser as GraphQLNewUser;
+use crate::gql::{enums::Gender, input::NewUser as GraphQLNewUser};
 
-use super::enums::Gender;
 use super::schema::user;
 
 #[derive(Queryable)]

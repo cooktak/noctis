@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS user
     id          INT(11)                                   NOT NULL AUTO_INCREMENT,
     birthday    DATETIME                                  NOT NULL,
     create_time DATETIME(6)                               NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    gender      ENUM ('etc', 'female', 'male', 'private') NOT NULL,
+    gender      VARCHAR(8) NOT NULL,
     nickname    VARCHAR(16)                               NOT NULL,
     password    VARCHAR(255)                              NOT NULL,
     username    VARCHAR(255)                              NOT NULL,
