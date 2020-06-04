@@ -3,6 +3,7 @@ use juniper::GraphQLObject;
 use juniper::integrations::chrono::*;
 
 use crate::database::model::User as DatabaseUser;
+
 use super::enums::{Episode, Gender};
 
 #[derive(GraphQLObject)]

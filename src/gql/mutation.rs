@@ -34,13 +34,9 @@ impl MutationRoot {
         })
     }
 
-    fn create_user(context: &Context, new_user: NewUser) -> Option<User> {
-        let conn = context.database_pool
-        .get()
-        .map_err(|e| error!("Database Failed"))
-        .ok()?;
-        let result: DatabaseUser = local::create(&conn, DatabaseNewUser::from_graphql(new_user))
-        .map_err(|e| UserError::NotFound).expect("Creation Error");
-        Some(User::from_database(&result))
+    fn create_user(context: &Context, new_user: NewUser) -> FieldResult<User> {
+        let conn = context.database_pool.get()?;
+        let result: DatabaseUser = local::create(&conn, DatabaseNewUser::from_graphql(new_user))?;
+        Ok(User::from_database(&result))
     }
 }

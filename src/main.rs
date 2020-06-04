@@ -14,8 +14,8 @@ use database::connection::establish_r2d2_connection;
 use gql::{create_schema, Schema};
 
 use crate::database::connection::{build_pool, establish_diesel_connection};
-use crate::gql::context::Context;
 use crate::database::error::DatabaseError;
+use crate::gql::context::Context;
 
 mod gql;
 mod config;

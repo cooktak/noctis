@@ -1,6 +1,6 @@
+use chrono::NaiveDateTime;
 use juniper::GraphQLInputObject;
 
-use chrono::NaiveDateTime;
 use super::enums::{Episode, Gender};
 
 #[derive(GraphQLInputObject)]
