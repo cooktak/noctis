@@ -2,14 +2,13 @@ use juniper::FieldResult;
 use log::error;
 use thiserror::Error;
 
-use crate::config::Database;
 use crate::database::model::{NewUser as DatabaseNewUser, User as DatabaseUser};
-use crate::gql::object::User;
 use crate::user::local;
 
 use super::context::Context;
 use super::input::{NewHuman, NewUser};
 use super::object::Human;
+use super::object::User;
 
 pub struct MutationRoot;
 

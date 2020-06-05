@@ -8,18 +8,14 @@ use std::sync::Arc;
 use actix_web::{App, dev, Error, http, HttpResponse, HttpServer, middleware, Responder, web};
 use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 use juniper::http::{GraphQLRequest, playground::playground_source};
-use log::error;
 
-use database::connection::establish_r2d2_connection;
-use gql::{create_schema, Schema};
-
-use crate::database::connection::{build_pool, establish_diesel_connection};
+use crate::database::connection::{build_pool, establish_diesel_connection, establish_r2d2_connection};
 use crate::database::error::DatabaseError;
-use crate::gql::context::Context;
+use crate::gql::{context::Context, create_schema, Schema};
 
-mod gql;
 mod config;
 mod database;
+mod gql;
 mod user;
 
 async fn playground() -> impl Responder {

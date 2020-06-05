@@ -1,5 +1,4 @@
 use std::env::{var, VarError};
-use std::fmt::{self, Display, Formatter};
 
 use thiserror::Error;
 
