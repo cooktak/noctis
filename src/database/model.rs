@@ -107,10 +107,10 @@ pub struct User {
 }
 
 impl User {
-    pub fn hashed_password(password: &str, username: &str, user_tag: &i32) -> String {
+    pub fn hashed_password(password: &str, username: &str) -> String {
         argon2rs::argon2i_simple(
             password,
-            format!("{}#{}", username, user_tag).as_str(),
+            format!("{}@cooktak", username).as_str(),
         )
         .to_vec()
         .into_iter()
@@ -147,7 +147,10 @@ impl NewUser {
             nickname: user.nickname,
             password: user.password,
             username: user.username,
-            user_tag: rng.gen_range(1, 9999),
+            user_tag: match user.user_tag {
+                Some(tag) => tag,
+                None => rng.gen_range(1, 9999),
+            },
         }
     }
 
@@ -159,7 +162,6 @@ impl NewUser {
             password: User::hashed_password(
                 &self.password,
                 &self.username,
-                &self.user_tag,
             ),
             username: self.username.clone(),
             user_tag: self.user_tag.clone(),
@@ -180,12 +182,12 @@ mod tests {
             gender: "etc".to_string(),
             nickname: "SLoWMoTIoN".to_string(),
             password: "P@ssw0rd".to_string(),
-            username: "username".to_string(),
+            username: "username@domain.com".to_string(),
             user_tag: 122,
         };
         assert_eq!(
             user.to_hashed().password,
-            User::hashed_password(&user.password, &user.username, &user.user_tag)
+            User::hashed_password(&user.password, &user.username)
         );
     }
 }

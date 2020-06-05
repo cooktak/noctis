@@ -23,12 +23,12 @@ impl QueryRoot {
         })
     }
 
-    fn user(context: &Context, username: String, user_tag: i32) -> FieldResult<User> {
+    fn user(context: &Context, username: String) -> FieldResult<User> {
         let conn: MysqlPooledConnection = match context.database_pool.get() {
             Ok(conn) => conn,
             Err(e) => Err(UserError::Unknown(e.to_string()))?,
         };
-        let result = local::query(&conn, &username, user_tag)?;
+        let result = local::query(&conn, &username)?;
         Ok(User::from_database(&result))
     }
 }

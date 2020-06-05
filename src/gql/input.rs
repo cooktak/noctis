@@ -19,4 +19,5 @@ pub struct NewUser {
     pub nickname: String,
     pub password: String,
     pub username: String,
+    pub user_tag: Option<i32>,
 }
