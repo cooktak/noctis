@@ -1,11 +1,12 @@
-use juniper::FieldResult;
+use juniper::{FieldError, FieldResult};
 use log::error;
 
-use crate::gql::context::Context;
-use crate::gql::enums::Episode;
-use crate::gql::mutation::UserError;
-use crate::gql::object::{Human, User};
-use crate::user::local;
+use crate::database::connection::MysqlPooledConnection;
+use crate::user::{error::UserError, local};
+
+use super::context::Context;
+use super::enums::Episode;
+use super::object::{Human, User};
 
 pub struct QueryRoot;
 
@@ -22,14 +23,12 @@ impl QueryRoot {
         })
     }
 
-    fn user(context: &Context, username: String, user_tag: i32) -> Option<User> {
-        let conn = context.database_pool
-        .get()
-        .map_err(|e| error!("Database Failed"))
-        .ok()?;
-        let result = local::query(&conn, &username, user_tag)
-        .map_err(|e| UserError::NotFound)
-        .expect("User Not Found");
-        Some(User::from_database(&result))
+    fn user(context: &Context, username: String) -> FieldResult<User> {
+        let conn: MysqlPooledConnection = match context.database_pool.get() {
+            Ok(conn) => conn,
+            Err(e) => Err(UserError::Unknown(e.to_string()))?,
+        };
+        let result = local::query(&conn, &username)?;
+        Ok(User::from_database(&result))
     }
 }

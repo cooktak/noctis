@@ -1,6 +1,6 @@
+use chrono::NaiveDateTime;
 use juniper::GraphQLInputObject;
 
-use chrono::NaiveDateTime;
 use super::enums::{Episode, Gender};
 
 #[derive(GraphQLInputObject)]
@@ -19,4 +19,5 @@ pub struct NewUser {
     pub nickname: String,
     pub password: String,
     pub username: String,
+    pub user_tag: Option<i32>,
 }

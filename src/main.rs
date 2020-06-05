@@ -14,6 +14,7 @@ use database::connection::establish_r2d2_connection;
 use gql::{create_schema, Schema};
 
 use crate::database::connection::{build_pool, establish_diesel_connection};
+use crate::database::error::DatabaseError;
 use crate::gql::context::Context;
 
 mod gql;
@@ -62,21 +63,19 @@ async fn main() -> std::io::Result<()> {
     let config = config::Config::load().expect("Config Error");
 
     // Establish connection for diesel
-    let connection = establish_diesel_connection(&config.database)
-    .ok().expect("Database Connection Failed");
+    let connection = establish_diesel_connection(&config.database);
 
     // Migrate
-    embedded_migrations::run(&connection).map_err(|e| error!("Migration failed")).unwrap();
+    embedded_migrations::run(&connection.ok().expect("Database Error"))
+    .map_err(|e| DatabaseError::MigrationError(e.to_string()))
+    .ok()
+    .unwrap();
 
     // Establish connection for R2D2
     let manager = establish_r2d2_connection(&config.database);
 
     // Create Context
-    let context = Arc::new(
-        Context::new(
-            build_pool(manager).expect("Database Pool Error")
-        )
-    );
+    let context = Arc::new(Context::new(build_pool(manager).ok().expect("Pool Error")));
 
     // Create Juniper schema
     let schema = std::sync::Arc::new(create_schema());

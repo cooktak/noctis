@@ -1,40 +1,52 @@
 use diesel::{ExpressionMethods, MysqlConnection, QueryDsl, QueryResult, RunQueryDsl};
+use diesel::result::{DatabaseErrorKind, Error as DieselError};
 use log::error;
 use thiserror::Error;
 
 use crate::database::model::{NewUser, User};
 
-#[derive(Error, Debug)]
-pub enum DatabaseError {
-    #[error("Unknown Error")]
-    Unknown,
-}
+use super::error::UserError;
 
 pub fn create(
     conn: &MysqlConnection,
     new_user: NewUser,
-) -> QueryResult<User> {
+) -> Result<User, UserError> {
     use crate::database::schema::user::dsl::*;
     use diesel::prelude::*;
+
     diesel::insert_into(user)
     .values(&new_user.to_hashed())
     .execute(conn)
-    .expect("Creation Error");
+    .map_err(|e| {
+        match e {
+            DieselError::DatabaseError(DatabaseErrorKind::UniqueViolation, _) => UserError::Exists,
+            _ => UserError::Unknown(e.to_string()),
+        }
+    })?;
+
     user
-    .filter(username.eq(new_user.username.to_owned()))
-    .filter(birthday.eq(new_user.birthday))
+    .filter(username.eq(&new_user.username))
     .get_result(conn)
+    .map_err(|e| {
+        match e {
+            _ => UserError::Unknown(e.to_string()),
+        }
+    })
 }
 
 pub fn query(
     conn: &MysqlConnection,
     query_user_name: &String,
-    query_user_tag: i32,
-) -> QueryResult<User> {
+) -> Result<User, UserError> {
     use crate::database::schema::user::dsl::*;
     use diesel::prelude::*;
     user
     .filter(username.eq(query_user_name))
-    .filter(user_tag.eq(query_user_tag))
     .get_result(conn)
+    .map_err(|e| {
+        match e {
+            DieselError::NotFound => UserError::NotFound(query_user_name.clone()),
+            _ => UserError::Unknown(e.to_string()),
+        }
+    })
 }
