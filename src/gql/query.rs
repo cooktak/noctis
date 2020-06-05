@@ -1,5 +1,4 @@
-use juniper::{FieldError, FieldResult};
-use log::error;
+use juniper::FieldResult;
 
 use crate::database::connection::MysqlPooledConnection;
 use crate::user::{error::UserError, local};

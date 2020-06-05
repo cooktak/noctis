@@ -1,7 +1,5 @@
-use diesel::{ExpressionMethods, MysqlConnection, QueryDsl, QueryResult, RunQueryDsl};
+use diesel::MysqlConnection;
 use diesel::result::{DatabaseErrorKind, Error as DieselError};
-use log::error;
-use thiserror::Error;
 
 use crate::database::model::{NewUser, User};
 

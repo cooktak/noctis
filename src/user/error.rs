@@ -1,6 +1,5 @@
 use std::fmt::Debug;
 
-use diesel::result::Error;
 use thiserror::Error;
 
 #[derive(Error, Debug)]

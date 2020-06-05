@@ -1,5 +1,4 @@
 use chrono::NaiveDateTime;
-use rand::Rng;
 
 use crate::gql::{enums::Gender, input::NewUser as GraphQLNewUser};
 

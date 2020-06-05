@@ -1,6 +1,5 @@
 use chrono::{DateTime, Utc};
 use juniper::GraphQLObject;
-use juniper::integrations::chrono::*;
 
 use crate::database::model::User as DatabaseUser;
 

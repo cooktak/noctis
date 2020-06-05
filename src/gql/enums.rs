@@ -7,7 +7,7 @@ pub enum Episode {
     Jedi,
 }
 
-#[derive(juniper::GraphQLEnum)]
+#[derive(GraphQLEnum)]
 pub enum Gender {
     Private,
     Male,
