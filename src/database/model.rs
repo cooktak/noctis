@@ -1,8 +1,9 @@
 use chrono::NaiveDateTime;
+use rand::Rng;
 
 use crate::gql::{enums::Gender, input::NewUser as GraphQLNewUser};
 
-use super::schema::user;
+use super::schema::{device, user};
 
 #[derive(Queryable)]
 pub struct Cookery {
@@ -85,11 +86,39 @@ pub struct Seller {
 }
 
 #[derive(Queryable)]
-pub struct Token {
+pub struct Device {
     pub id: i32,
-    pub access_token: String,
-    pub refresh_token: String,
+    pub token: String,
+    pub name: String,
     pub user_id: i32,
+}
+
+#[derive(Insertable, Debug)]
+#[table_name = "device"]
+pub struct NewDevice {
+    pub token: String,
+    pub name: String,
+    pub user_id: i32,
+}
+
+impl NewDevice {
+    pub fn new(user_id: i32, name: String) -> Self {
+        use rand::{thread_rng, Rng};
+        use rand::distributions::Alphanumeric;
+
+        let mut rng = thread_rng();
+        let token_length: usize = rng.gen_range(64, 128);
+        let token: String = rng
+        .sample_iter(&Alphanumeric)
+        .take(token_length)
+        .collect();
+
+        Self {
+            name,
+            token,
+            user_id,
+        }
+    }
 }
 
 #[derive(Queryable)]

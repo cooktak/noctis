@@ -6,6 +6,15 @@ table! {
 }
 
 table! {
+    device (id) {
+        id -> Integer,
+        token -> Varchar,
+        name -> Varchar,
+        user_id -> Integer,
+    }
+}
+
+table! {
     food_type (id) {
         id -> Integer,
         name -> Varchar,
@@ -90,15 +99,6 @@ table! {
 }
 
 table! {
-    token (id) {
-        id -> Integer,
-        access_token -> Varchar,
-        refresh_token -> Varchar,
-        user_id -> Integer,
-    }
-}
-
-table! {
     user (id) {
         id -> Integer,
         birthday -> Datetime,
@@ -119,6 +119,7 @@ table! {
     }
 }
 
+joinable!(device -> user (user_id));
 joinable!(post -> user (user_id));
 joinable!(post_content -> post (post_id));
 joinable!(post_cookery -> cookery (cookery_id));
@@ -131,10 +132,10 @@ joinable!(post_product -> post (post_id));
 joinable!(post_product -> product (product_id));
 joinable!(product -> seller (seller_id));
 joinable!(product -> vendor (vendor_id));
-joinable!(token -> user (user_id));
 
 allow_tables_to_appear_in_same_query!(
     cookery,
+    device,
     food_type,
     ingredient,
     post,
@@ -145,7 +146,6 @@ allow_tables_to_appear_in_same_query!(
     post_product,
     product,
     seller,
-    token,
     user,
     vendor,
 );

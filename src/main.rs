@@ -15,6 +15,7 @@ use crate::gql::{context::Context, create_schema, Schema};
 
 mod config;
 mod database;
+mod device;
 mod gql;
 mod user;
 
