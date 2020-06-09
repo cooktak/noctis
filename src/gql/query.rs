@@ -1,11 +1,12 @@
 use juniper::FieldResult;
 
 use crate::database::connection::MysqlPooledConnection;
+use crate::device::{DeviceError, validate};
 use crate::user::{error::UserError, local};
 
 use super::context::Context;
 use super::enums::Episode;
-use super::object::{Human, User};
+use super::object::{Device, Human, User};
 
 pub struct QueryRoot;
 
@@ -29,5 +30,14 @@ impl QueryRoot {
         };
         let result = local::query(&conn, &username)?;
         Ok(User::from_database(&result))
+    }
+
+    fn validate_device(context: &Context, token: String) -> FieldResult<Device> {
+        let conn: MysqlPooledConnection = match context.database_pool.get() {
+            Ok(conn) => conn,
+            Err(e) => Err(DeviceError::Unknown(e.to_string()))?,
+        };
+        let result = validate(&conn, token)?;
+        Ok(Device::from_database(result))
     }
 }
