@@ -100,6 +100,17 @@ pub struct NewDevice {
     pub user_id: i32,
 }
 
+impl NewDevice {
+    pub fn new(user_id: i32, name: String) -> Self {
+        Self {
+            name,
+            // TODO: Generate new token
+            token: String::from(""),
+            user_id,
+        }
+    }
+}
+
 #[derive(Queryable)]
 pub struct User {
     pub id: i32,
