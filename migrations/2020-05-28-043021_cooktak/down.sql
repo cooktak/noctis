@@ -1,4 +1,4 @@
-DROP TABLE token;
+DROP TABLE device;
 DROP TABLE post_product;
 DROP TABLE product;
 DROP TABLE seller;

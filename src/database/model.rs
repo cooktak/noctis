@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 
 use crate::gql::{enums::Gender, input::NewUser as GraphQLNewUser};
 
-use super::schema::user;
+use super::schema::{device, user};
 
 #[derive(Queryable)]
 pub struct Cookery {
@@ -85,10 +85,18 @@ pub struct Seller {
 }
 
 #[derive(Queryable)]
-pub struct Token {
+pub struct Device {
     pub id: i32,
-    pub access_token: String,
-    pub refresh_token: String,
+    pub token: String,
+    pub name: String,
+    pub user_id: i32,
+}
+
+#[derive(Insertable, Debug)]
+#[table_name = "device"]
+pub struct NewDevice {
+    pub token: String,
+    pub name: String,
     pub user_id: i32,
 }
 
