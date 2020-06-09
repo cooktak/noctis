@@ -1,7 +1,7 @@
 use juniper::FieldResult;
 
 use crate::database::connection::MysqlPooledConnection;
-use crate::device::{DeviceError, validate};
+use crate::device::{self, DeviceError};
 use crate::user::{error::UserError, local};
 
 use super::context::Context;
@@ -37,7 +37,17 @@ impl QueryRoot {
             Ok(conn) => conn,
             Err(e) => Err(DeviceError::Unknown(e.to_string()))?,
         };
-        let result = validate(&conn, token)?;
-        Ok(Device::from_database(result))
+        let result = device::validate(&conn, token)?;
+        Ok(Device::from_database(&result))
+    }
+
+    fn obtain_devices(context: &Context, username: String) -> FieldResult<Vec<Device>> {
+        let conn: MysqlPooledConnection = context.database_pool.get()?;
+
+        let user = local::query(&conn, &username)?;
+
+        let result = device::devices(&conn, user)?;
+
+        Ok(result.iter().map(|e| Device::from_database(e)).collect())
     }
 }

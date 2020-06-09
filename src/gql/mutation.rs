@@ -49,6 +49,6 @@ impl MutationRoot {
         let user = local::query(&conn, &username)?;
 
         let result: DatabaseDevice = register(&conn, user, device_name)?;
-        Ok(Device::from_database(result))
+        Ok(Device::from_database(&result))
     }
 }

@@ -55,11 +55,11 @@ pub struct Device {
 }
 
 impl Device {
-    pub fn from_database(device: DatabaseDevice) -> Self {
+    pub fn from_database(device: &DatabaseDevice) -> Self {
         Self {
             id: device.id,
-            token: device.token,
-            name: device.name,
+            token: device.token.clone(),
+            name: device.name.clone(),
             user_id: device.user_id,
         }
     }
