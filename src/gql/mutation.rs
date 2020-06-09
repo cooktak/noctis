@@ -7,7 +7,7 @@ use crate::database::model::{
     NewUser as DatabaseNewUser,
     User as DatabaseUser,
 };
-use crate::device::register;
+use crate::device;
 use crate::user::local;
 
 use super::context::Context;
@@ -48,7 +48,14 @@ impl MutationRoot {
 
         let user = local::query(&conn, &username)?;
 
-        let result: DatabaseDevice = register(&conn, user, device_name)?;
+        let result: DatabaseDevice = device::register(&conn, user, device_name)?;
+        Ok(Device::from_database(&result))
+    }
+
+    fn revoke_device(context: &Context, token: String) -> FieldResult<Device> {
+        let conn = context.database_pool.get()?;
+
+        let result: DatabaseDevice = device::revoke(&conn, token)?;
         Ok(Device::from_database(&result))
     }
 }

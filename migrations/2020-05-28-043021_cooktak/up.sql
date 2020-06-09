@@ -282,7 +282,7 @@ CREATE TABLE IF NOT EXISTS device
     name    VARCHAR(64)  NOT NULL,
     user_id INT(11)      NOT NULL,
     PRIMARY KEY (id),
-    UNIQUE INDEX `REL_94f168faad896c0786646fa3d4` (user_id ASC),
+    INDEX `REL_94f168faad896c0786646fa3d4` (user_id ASC),
     CONSTRAINT `FK_94f168faad896c0786646fa3d4a`
         FOREIGN KEY (user_id)
             REFERENCES user (id)
