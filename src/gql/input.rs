@@ -1,15 +1,7 @@
 use chrono::NaiveDateTime;
 use juniper::GraphQLInputObject;
 
-use super::enums::{Episode, Gender};
-
-#[derive(GraphQLInputObject)]
-#[graphql(description = "A humanoid creature in the Star Wars universe")]
-pub struct NewHuman {
-    pub name: String,
-    pub appears_in: Vec<Episode>,
-    pub home_planet: String,
-}
+use super::enums::Gender;
 
 #[derive(GraphQLInputObject)]
 #[graphql(description = "New User")]
