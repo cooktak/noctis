@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use juniper::GraphQLObject;
 
-use crate::database::model::User as DatabaseUser;
+use crate::database::model::{Device as DatabaseDevice, User as DatabaseUser};
 
 use super::enums::{Episode, Gender};
 
@@ -41,6 +41,26 @@ impl User {
             username: user.username.clone(),
             user_tag: user.user_tag.clone(),
             photo_link: user.photo_link.clone(),
+        }
+    }
+}
+
+#[derive(GraphQLObject)]
+#[graphql(description = "Device Registration")]
+pub struct Device {
+    pub id: i32,
+    pub token: String,
+    pub name: String,
+    pub user_id: i32,
+}
+
+impl Device {
+    pub fn from_database(device: DatabaseDevice) -> Self {
+        Self {
+            id: device.id,
+            token: device.token,
+            name: device.name,
+            user_id: device.user_id,
         }
     }
 }
