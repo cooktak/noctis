@@ -1,4 +1,4 @@
-use diesel::{MysqlConnection, RunQueryDsl};
+use diesel::MysqlConnection;
 
 use crate::database::model::Device;
 
