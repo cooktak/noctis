@@ -5,8 +5,7 @@ use crate::device::{self, DeviceError};
 use crate::user::{error::UserError, local};
 
 use super::context::Context;
-use super::enums::Episode;
-use super::object::{Device, Human, User};
+use super::object::{Device, User};
 
 pub struct QueryRoot;
 
@@ -14,15 +13,6 @@ pub struct QueryRoot;
 Context = Context,
 )]
 impl QueryRoot {
-    fn human(id: String) -> FieldResult<Human> {
-        Ok(Human {
-            id: "1234".to_owned(),
-            name: "Luke".to_owned(),
-            appears_in: vec![Episode::NewHope],
-            home_planet: "Mars".to_owned(),
-        })
-    }
-
     fn user(context: &Context, username: String) -> FieldResult<User> {
         let conn: MysqlPooledConnection = match context.database_pool.get() {
             Ok(conn) => conn,

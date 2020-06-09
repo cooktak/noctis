@@ -3,16 +3,7 @@ use juniper::GraphQLObject;
 
 use crate::database::model::{Device as DatabaseDevice, User as DatabaseUser};
 
-use super::enums::{Episode, Gender};
-
-#[derive(GraphQLObject)]
-#[graphql(description = "A humanoid creature in the Star Wars universe")]
-pub struct Human {
-    pub id: String,
-    pub name: String,
-    pub appears_in: Vec<Episode>,
-    pub home_planet: String,
-}
+use super::enums::Gender;
 
 #[derive(GraphQLObject)]
 #[graphql(description = "User")]
