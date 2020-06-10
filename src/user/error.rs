@@ -10,4 +10,6 @@ pub enum UserError {
     NotFound(String),
     #[error("Unknown Error: {0}")]
     Unknown(String),
+    #[error("Username and password is not on database")]
+    Authentication,
 }
