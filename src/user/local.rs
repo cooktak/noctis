@@ -1,7 +1,8 @@
 use diesel::MysqlConnection;
 use diesel::result::{DatabaseErrorKind, Error as DieselError};
 
-use crate::database::model::{NewUser, User};
+use crate::database::model::{Device, NewUser, User};
+use crate::device;
 
 use super::error::UserError;
 
@@ -47,4 +48,19 @@ pub fn query(
             _ => UserError::Unknown(e.to_string()),
         }
     })
+}
+
+pub fn authentication(
+    conn: &MysqlConnection,
+    auth_user_name: &String,
+    auth_password: &String,
+    auth_device_name: &String,
+) -> Result<Device, UserError> {
+    let user = query(conn, auth_user_name)?;
+    let hashed_password = User::hashed_password(auth_password, auth_user_name);
+    if !user.password.eq(&hashed_password) {
+        return Err(UserError::Authentication);
+    }
+
+    device::register(conn, user, auth_device_name.clone())
 }
