@@ -84,7 +84,7 @@ pub struct Seller {
     pub name: String,
 }
 
-#[derive(Queryable, Clone)]
+#[derive(Queryable)]
 pub struct Device {
     pub id: i32,
     pub token: String,
