@@ -31,7 +31,7 @@ impl MutationRoot {
         Ok(Device::from_database(&result))
     }
 
-    fn authentication(context: &Context, username: String, password: String, device_name: String) -> FieldResult<Device> {
+    fn register_device(context: &Context, username: String, password: String, device_name: String) -> FieldResult<Device> {
         let conn = context.database_pool.get()?;
         let result: DatabaseDevice = local::authentication(&conn, &username, &password, &device_name)?;
         Ok(Device::from_database(&result))
