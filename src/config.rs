@@ -13,8 +13,8 @@ pub enum ConfigError {
 impl ConfigError {
     fn from_var_error(key: &str, var_error: VarError) -> Self {
         match var_error {
-            VarError::NotPresent => Self::MissingKey(key.to_owned()),
-            VarError::NotUnicode(_) => Self::InvalidFormat(key.to_owned()),
+            VarError::NotPresent => Self::MissingKey(key.to_string()),
+            VarError::NotUnicode(_) => Self::InvalidFormat(key.to_string()),
         }
     }
 }
@@ -25,6 +25,7 @@ macro_rules! try_get_var {
     };
 }
 
+#[derive(Clone)]
 pub struct Database {
     pub url: String,
 }
@@ -39,6 +40,7 @@ impl Database {
     }
 }
 
+#[derive(Clone)]
 pub struct Config {
     pub database: Database,
     pub bind_address: String,
