@@ -4,6 +4,7 @@ extern crate diesel;
 extern crate diesel_migrations;
 
 use std::sync::Arc;
+use std::io::{Error as StdError, ErrorKind as StdErrorKind};
 
 use actix_web::{App, dev, Error, http, HttpResponse, HttpServer, middleware, Responder, web};
 use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
@@ -12,6 +13,7 @@ use juniper::http::{GraphQLRequest, playground::playground_source};
 use crate::database::connection::{build_pool, establish_diesel_connection, establish_r2d2_connection};
 use crate::database::error::DatabaseError;
 use crate::gql::{context::Context, create_schema, Schema};
+use crate::config::ConfigError;
 
 mod config;
 mod database;
@@ -57,7 +59,10 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
 
-    let config = config::Config::load().expect("Config Error");
+    let config = config::Config::load().map_err(|e| match e {
+        ConfigError::MissingKey(_) => StdError::new(StdErrorKind::NotFound, e.to_string()),
+        ConfigError::InvalidFormat(_) => StdError::new(StdErrorKind::InvalidInput, e.to_string()),
+    })?;
 
     // Establish connection for diesel
     let connection = establish_diesel_connection(&config.database);
@@ -65,14 +70,20 @@ async fn main() -> std::io::Result<()> {
     // Migrate
     embedded_migrations::run(&connection.ok().expect("Database Error"))
     .map_err(|e| DatabaseError::MigrationError(e.to_string()))
-    .ok()
     .unwrap();
 
     // Establish connection for R2D2
     let manager = establish_r2d2_connection(&config.database);
 
+    // Build Connection pool
+    let pool = build_pool(manager).map_err(|e| match e {
+        DatabaseError::ConnectionError(_) => StdError::new(StdErrorKind::NotConnected, e.to_string()),
+        DatabaseError::MigrationError(_) => StdError::new(StdErrorKind::ConnectionRefused, e.to_string()),
+        DatabaseError::PoolError(_) => StdError::new(StdErrorKind::ConnectionRefused, e.to_string()),
+    })?;
+
     // Create Context
-    let context = Arc::new(Context::new(build_pool(manager).ok().expect("Pool Error")));
+    let context = Arc::new(Context::new(pool, config.clone()));
 
     // Create Juniper schema
     let schema = std::sync::Arc::new(create_schema());

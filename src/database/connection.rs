@@ -21,5 +21,5 @@ pub fn establish_r2d2_connection(config: &config::Database) -> ConnectionManager
 pub fn build_pool(manager: ConnectionManager<MysqlConnection>) -> Result<MysqlPool, DatabaseError> {
     Pool::builder()
     .build(manager)
-    .map_err(move |e| DatabaseError::PoolError(e.to_string()))
+    .map_err(|e| DatabaseError::PoolError(e.to_string()))
 }
