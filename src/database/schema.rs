@@ -105,7 +105,7 @@ table! {
         create_time -> Datetime,
         gender -> Varchar,
         nickname -> Varchar,
-        password -> Varchar,
+        password -> Binary,
         username -> Varchar,
         user_tag -> Integer,
         photo_link -> Nullable<Varchar>,

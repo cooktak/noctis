@@ -8,14 +8,13 @@ pub fn validate(
     query_token: String,
 ) -> Result<Device, DeviceError> {
     let query: (Device, User) = {
-        use crate::database::schema::device::dsl::*;
-        use crate::database::schema::user;
+        use crate::database::schema::{device::dsl::*, user};
         use diesel::prelude::*;
 
         device
         .filter(token.eq(query_token))
         .inner_join(user::table)
-        .first(conn)
+        .get_result(conn)
         .map_err(|e| {
             match e {
                 DieselError::NotFound => DeviceError::NotFound,

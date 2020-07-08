@@ -14,7 +14,10 @@ pub fn create(
     use diesel::prelude::*;
 
     diesel::insert_into(user)
-    .values(&new_user.to_hashed())
+    .values(&(match new_user.to_hashed() {
+        Ok(u) => Ok(u),
+        Err(e) => Err(UserError::Unknown(e.to_string()))
+    }?))
     .execute(conn)
     .map_err(|e| {
         match e {
@@ -57,7 +60,10 @@ pub fn authentication(
     auth_device_name: &String,
 ) -> Result<Device, UserError> {
     let user = query(conn, auth_user_name)?;
-    let hashed_password = User::hashed_password(auth_password, auth_user_name);
+    let hashed_password = match User::hashed_password(&Vec::from(auth_password.clone()), auth_user_name) {
+        Ok(p) => Ok(p),
+        Err(e) => Err(UserError::Unknown(e.to_string()))
+    }?;
     if !user.password.eq(&hashed_password) {
         return Err(UserError::Authentication);
     }
