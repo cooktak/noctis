@@ -1,5 +1,6 @@
-use chrono::NaiveDateTime;
 use std::str;
+
+use chrono::NaiveDateTime;
 
 use crate::gql::{enums::Gender, input::NewUser as GraphQLNewUser};
 
@@ -213,8 +214,8 @@ mod tests {
             user_tag: 122,
         };
         assert_eq!(
-            user.to_hashed().password,
-            User::hashed_password(&user.password, &user.username)?
+            Ok(user.to_hashed().unwrap().password),
+            User::hashed_password(&user.password, &user.username)
         );
     }
 }
