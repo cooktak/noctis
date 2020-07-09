@@ -17,3 +17,4 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           dokku-host: 'kr.slowmotion.dev'
           app-name: 'cooktak'
+          git-push-flags: '--force'
