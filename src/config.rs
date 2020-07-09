@@ -54,19 +54,27 @@ impl Config {
 
         let database = Database::from_env()?;
 
-        let bind_address = var("BIND_ADDRESS").unwrap_or("0.0.0.0:80".to_owned());
+        let port = var("PORT").unwrap_or_else(|_| {
+            String::from("80")
+        });
 
-        let jwt_issuer = var("JWT_ISSUER").unwrap_or("cooktak".to_owned());
+        let bind_address = var("BIND_ADDRESS").unwrap_or_else(|_| {
+            format!("0.0.0.0:{}", port)
+        });
+
+        let jwt_issuer = var("JWT_ISSUER").unwrap_or_else(|_| {
+            String::from("cooktak")
+        });
 
         use rand::thread_rng;
         use rand::Rng;
         use rand::distributions::Alphanumeric;
-        let jwt_secret = var("JWT_SECRET").unwrap_or(
+        let jwt_secret = var("JWT_SECRET").unwrap_or_else(|_| {
             thread_rng()
             .sample_iter(&Alphanumeric)
             .take(30)
             .collect()
-        );
+        });
 
         Ok(Self {
             database,
