@@ -136,7 +136,7 @@ pub struct User {
 }
 
 impl User {
-    pub fn hashed_password(password: &Vec<u8>, username: &str) -> Result<Vec<u8>, std::str::Utf8Error> {
+    pub fn hashed_password(password: &[u8], username: &str) -> Result<Vec<u8>, std::str::Utf8Error> {
         Ok(argon2rs::argon2i_simple(
             match str::from_utf8(password) {
                 Ok(v) => Ok(v),
@@ -184,7 +184,7 @@ impl NewUser {
 
     pub fn to_hashed(&self) -> Result<Self, str::Utf8Error> {
         Ok(NewUser {
-            birthday: self.birthday.clone(),
+            birthday: self.birthday,
             gender: self.gender.clone(),
             nickname: self.nickname.clone(),
             password: User::hashed_password(
@@ -192,7 +192,7 @@ impl NewUser {
                 &self.username,
             )?,
             username: self.username.clone(),
-            user_tag: self.user_tag.clone(),
+            user_tag: self.user_tag,
         })
     }
 }

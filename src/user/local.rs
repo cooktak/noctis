@@ -1,3 +1,5 @@
+use std::str;
+
 use diesel::MysqlConnection;
 use diesel::result::{DatabaseErrorKind, Error as DieselError};
 
@@ -30,15 +32,13 @@ pub fn create(
     .filter(username.eq(&new_user.username))
     .get_result(conn)
     .map_err(|e| {
-        match e {
-            _ => UserError::Unknown(e.to_string()),
-        }
+        UserError::Unknown(e.to_string())
     })
 }
 
 pub fn query(
     conn: &MysqlConnection,
-    query_user_name: &String,
+    query_user_name: &str,
 ) -> Result<User, UserError> {
     use crate::database::schema::user::dsl::*;
     use diesel::prelude::*;
@@ -47,7 +47,7 @@ pub fn query(
     .get_result(conn)
     .map_err(|e| {
         match e {
-            DieselError::NotFound => UserError::NotFound(query_user_name.clone()),
+            DieselError::NotFound => UserError::NotFound(String::from(query_user_name)),
             _ => UserError::Unknown(e.to_string()),
         }
     })
@@ -55,12 +55,12 @@ pub fn query(
 
 pub fn authentication(
     conn: &MysqlConnection,
-    auth_user_name: &String,
-    auth_password: &String,
-    auth_device_name: &String,
+    auth_user_name: &str,
+    auth_password: &str,
+    auth_device_name: &str,
 ) -> Result<Device, UserError> {
     let user = query(conn, auth_user_name)?;
-    let hashed_password = match User::hashed_password(&Vec::from(auth_password.clone()), auth_user_name) {
+    let hashed_password = match User::hashed_password(&Vec::from(auth_password), auth_user_name) {
         Ok(p) => Ok(p),
         Err(e) => Err(UserError::Unknown(e.to_string()))
     }?;
@@ -68,5 +68,5 @@ pub fn authentication(
         return Err(UserError::Authentication);
     }
 
-    device::register(conn, user, auth_device_name.clone())
+    device::register(conn, user, String::from(auth_device_name))
 }
