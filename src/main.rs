@@ -68,7 +68,7 @@ async fn main() -> std::io::Result<()> {
     let connection = establish_diesel_connection(&config.database);
 
     // Migrate
-    embedded_migrations::run(&connection.ok().expect("Database Error"))
+    embedded_migrations::run(&connection.expect("Database Error"))
     .map_err(|e| DatabaseError::MigrationError(e.to_string()))
     .unwrap();
 

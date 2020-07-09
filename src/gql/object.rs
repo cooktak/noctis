@@ -30,7 +30,7 @@ impl User {
             },
             nickname: user.nickname.clone(),
             username: user.username.clone(),
-            user_tag: user.user_tag.clone(),
+            user_tag: user.user_tag,
             photo_link: user.photo_link.clone(),
         }
     }

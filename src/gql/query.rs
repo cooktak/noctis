@@ -16,7 +16,7 @@ impl QueryRoot {
     fn user(context: &Context, username: String) -> FieldResult<User> {
         let conn: MysqlPooledConnection = match context.database_pool.get() {
             Ok(conn) => conn,
-            Err(e) => Err(UserError::Unknown(e.to_string()))?,
+            Err(e) => return Err(UserError::Unknown(e.to_string()).into()),
         };
         let result = local::query(&conn, &username)?;
         Ok(User::from_database(&result))
@@ -25,7 +25,7 @@ impl QueryRoot {
     fn validate_device(context: &Context, token: String) -> FieldResult<Device> {
         let conn: MysqlPooledConnection = match context.database_pool.get() {
             Ok(conn) => conn,
-            Err(e) => Err(DeviceError::Unknown(e.to_string()))?,
+            Err(e) => return Err(DeviceError::Unknown(e.to_string()).into()),
         };
         let result = device::validate(&conn, token)?;
         Ok(Device::from_database(&result))
