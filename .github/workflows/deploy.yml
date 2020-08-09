@@ -17,6 +17,6 @@ jobs:
         uses: idoberko2/dokku-deploy-github-action@v1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          dokku-host: 'kr.slowmotion.dev'
+          dokku-host: 'dokku.slowmotion.dev'
           app-name: 'cooktak'
           git-push-flags: '--force'
